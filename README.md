@@ -1,109 +1,292 @@
 # PulseCare - Healthcare Appointment & Follow-up Manager
 
-PulseCare is a production-quality, assignment-friendly full-stack healthcare appointment scheduling and follow-up management web application.
+PulseCare is a full-stack healthcare appointment scheduling and follow-up management platform built using the MERN stack.
+
+The application provides separate portals for **Patients, Doctors, and Administrators**, along with intelligent doctor availability, appointment scheduling, double-booking protection, AI-powered pre-visit triage, post-visit summaries, medication reminders, email notifications, and Google Calendar integration.
 
 ---
 
-## Technical Stack
+## Live Application
+https://health-appointment-1.onrender.com/
 
-- **Frontend**: React 18, Vite, Tailwind CSS, Lucide Icons, Axios, React Router v7.
-- **Backend**: Node.js, Express.js, MongoDB with Mongoose, JWT Authentication, bcryptjs, Helmet, CORS.
-- **AI Triage & Summarization**: `llmService.js` supporting Gemini / OpenAI / Groq / OpenRouter with structured JSON parsing & graceful fallbacks.
-- **Background Jobs**: BullMQ + Redis integration with automatic in-memory queue fallback if Redis is unavailable locally.
-- **Integrations**: Nodemailer email templates and Google Calendar OAuth 2.0 API.
+> The backend is deployed on Render.
+
+# Features
+
+## 1. Role-Based Portals
+
+PulseCare provides three dedicated portals:
+
+### Patient Portal
+
+Patients can:
+
+- Register and login
+- Search doctors
+- Filter doctors by specialization
+- View doctor profiles
+- View dynamically generated available slots
+- Submit symptoms before booking
+- Receive AI-powered pre-visit triage
+- Book appointments
+- Reschedule appointments
+- Cancel appointments
+- View appointment history
+- View consultation summaries
+- View prescriptions
+- View medication reminders
+- Receive notifications
+- Connect Google Calendar
+
+### Doctor Portal
+
+Doctors can:
+
+- Login securely
+- View upcoming appointments
+- Review patient symptoms
+- View AI-generated urgency information
+- View patient appointment details
+- Manage schedule
+- Configure working hours
+- Define slot duration
+- Mark leave/unavailability
+- Complete consultations
+- Add doctor notes
+- Add prescriptions
+- Generate AI-powered patient-friendly summaries
+- Create medication reminders
+- Manage appointments
+
+### Admin Portal
+
+Administrators can:
+
+- View system statistics
+- Manage doctors
+- Create doctors
+- Edit doctor profiles
+- Activate/deactivate doctors
+- View all appointments
+- View registered users
+- Manage doctor leave
+- Automatically handle appointments affected by doctor leave
 
 ---
 
-## Project Structure
+# Technical Stack
+
+## Frontend
+
+- React 18
+- Vite
+- Tailwind CSS
+- Axios
+- React Router
+- Lucide React Icons
+- JavaScript / JSX
+
+## Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT Authentication
+- bcryptjs
+- Helmet
+- CORS
+- Express Rate Limiter
+- Joi / Schema-based validation
+
+## AI
+
+The application supports multiple LLM providers:
+
+- Groq
+- Google Gemini
+- OpenAI
+- OpenRouter
+
+AI is used for:
+
+- Pre-visit symptom triage
+- Urgency classification
+- Suggested questions
+- Post-consultation summaries
+- Patient-friendly prescription/medical instructions
+
+The AI layer contains graceful fallbacks so that core appointment functionality does not completely fail when an external AI provider is unavailable.
+
+## Background Jobs
+
+- BullMQ
+- Redis
+- In-memory fallback queue
+
+Background jobs are used for:
+
+- Medication reminders
+- Appointment reminders
+- Email notifications
+- Email retry handling
+
+## Integrations
+
+- Nodemailer
+- SMTP email services
+- Google Calendar API
+- Google OAuth 2.0
+
+---
+
+# Project Architecture
 
 ```text
 Health Appointment/
-├── package.json (Monorepo root scripts)
+│
+├── package.json
 ├── README.md
-├── server/
+├── .gitignore
+│
+├── client/
 │   ├── src/
-│   │   ├── config/ (db.js, redis.js)
-│   │   ├── models/ (User.js, DoctorProfile.js, Appointment.js, Prescription.js, Notification.js, MedicationReminder.js, GoogleCalendarAccount.js, AIInteraction.js)
-│   │   ├── middleware/ (auth.js, authorize.js, errorHandler.js, rateLimiter.js, validate.js)
-│   │   ├── services/ (appointmentService.js, availabilityService.js, llmService.js, emailService.js, googleCalendarService.js, notificationService.js, medicationReminderService.js)
-│   │   ├── jobs/ & queues/ (queueManager.js, workers.js)
-│   │   ├── controllers/ (authController.js, doctorController.js, appointmentController.js, consultationController.js, adminController.js, calendarController.js, notificationController.js)
-│   │   ├── routes/ (authRoutes.js, doctorRoutes.js, appointmentRoutes.js, consultationRoutes.js, adminRoutes.js, calendarRoutes.js, notificationRoutes.js)
-│   │   ├── utils/ (logger.js, slotGenerator.js, asyncWrapper.js)
-│   │   ├── validators/ (schemas.js)
-│   │   ├── integrations/ (llmClient.js, googleCalendarClient.js, emailTransporter.js)
-│   │   ├── app.js
-│   │   └── server.js
-│   ├── seed.js
-│   └── tests/ (runTests.js)
-└── client/
+│   │   ├── components/
+│   │   │   ├── DoctorCard.jsx
+│   │   │   ├── SlotPicker.jsx
+│   │   │   ├── SymptomFormModal.jsx
+│   │   │   ├── PrescriptionFormModal.jsx
+│   │   │   ├── PrescriptionViewModal.jsx
+│   │   │   ├── StatusBadge.jsx
+│   │   │   ├── NotificationsDropdown.jsx
+│   │   │   └── CalendarConnectModal.jsx
+│   │   │
+│   │   ├── context/
+│   │   │   ├── AuthContext.jsx
+│   │   │   ├── NotificationContext.jsx
+│   │   │   └── ToastContext.jsx
+│   │   │
+│   │   ├── services/
+│   │   │   ├── api.js
+│   │   │   ├── authService.js
+│   │   │   ├── doctorService.js
+│   │   │   ├── appointmentService.js
+│   │   │   ├── adminService.js
+│   │   │   ├── notificationService.js
+│   │   │   └── calendarService.js
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── Landing.jsx
+│   │   │   ├── Login.jsx
+│   │   │   ├── Register.jsx
+│   │   │   ├── DoctorSearch.jsx
+│   │   │   ├── DoctorDetail.jsx
+│   │   │   ├── PatientDashboard.jsx
+│   │   │   ├── MyAppointments.jsx
+│   │   │   ├── MedicationRemindersView.jsx
+│   │   │   ├── DoctorDashboard.jsx
+│   │   │   ├── DoctorAppointments.jsx
+│   │   │   ├── DoctorSchedule.jsx
+│   │   │   ├── AdminDashboard.jsx
+│   │   │   ├── AdminDoctors.jsx
+│   │   │   ├── AdminDoctorCreateEdit.jsx
+│   │   │   ├── AdminLeaveManagement.jsx
+│   │   │   ├── AdminAppointments.jsx
+│   │   │   ├── AdminUsers.jsx
+│   │   │   └── CalendarCallback.jsx
+│   │   │
+│   │   ├── layouts/
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Sidebar.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── MainLayout.jsx
+│   │   │   └── DashboardLayout.jsx
+│   │   │
+│   │   ├── routes/
+│   │   │   ├── AppRoutes.jsx
+│   │   │   └── ProtectedRoute.jsx
+│   │   │
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   │
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.js
+│
+└── server/
     ├── src/
-    │   ├── components/ (DoctorCard, SlotPicker, SymptomFormModal, PrescriptionFormModal, PrescriptionViewModal, StatusBadge, NotificationsDropdown, CalendarConnectModal)
-    │   ├── context/ (AuthContext.jsx, NotificationContext.jsx, ToastContext.jsx)
-    │   ├── services/ (api.js, authService.js, doctorService.js, appointmentService.js, adminService.js, notificationService.js, calendarService.js)
-    │   ├── pages/ (Landing, Login, Register, DoctorSearch, DoctorDetail, PatientDashboard, MyAppointments, MedicationRemindersView, DoctorDashboard, DoctorAppointments, DoctorSchedule, AdminDashboard, AdminDoctors, AdminDoctorCreateEdit, AdminLeaveManagement, AdminAppointments, AdminUsers, CalendarCallback)
-    │   ├── layouts/ (Navbar, Sidebar, Footer, MainLayout, DashboardLayout)
-    │   ├── routes/ (AppRoutes, ProtectedRoute)
-    │   ├── App.jsx
-    │   └── main.jsx
-    ├── index.html
-    └── vite.config.js
-```
-
----
-
-## Key Strategies & Design Decisions
-
-### 1. Atomic Double-Booking Prevention
-MongoDB compound unique index on `{ doctorId: 1, appointmentDate: 1, startTime: 1 }` with partial filter expression `{ status: { $in: ['BOOKED', 'CONFIRMED'] } }`. When parallel requests attempt to book the exact same slot at the same millisecond, MongoDB guarantees only 1 request succeeds (201 Created) while the second is rejected with `409 Conflict`.
-
-### 2. AI Resiliency & Fallback Mode
-External LLM calls are isolated in `llmService.js`. If `LLM_API_KEY` is missing or an API error occurs, default safe fallbacks are used so appointment booking and consultation completion **never fail**.
-
-### 3. Queue & Background Job Architecture
-If Redis is running, BullMQ processes email retries and medication reminders. If Redis is not installed, `queueManager.js` seamlessly falls back to an in-memory worker engine.
-
----
-
-## Installation & Running Instructions
-
-### 1. Environment Setup
-Copy `.env.example` in `/server` to `.env`:
-```env
-PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/health_appointment
-JWT_SECRET=super_secret_health_app_jwt_key_2026
-CLIENT_URL=http://localhost:3000
-```
-
-### 2. Seed Database
-```bash
-cd server
-npm run seed
-```
-
-### 3. Run Automated Tests
-```bash
-cd server
-npm test
-```
-
-### 4. Start Application
-```bash
-# Start Backend (from /server)
-npm start
-
-# Start Frontend (from /client)
-npm run dev
-```
-
----
-
-## Demo Credentials
-
-- **Admin**: `admin@example.com` / `Admin@123`
-- **Doctor (Cardiology)**: `dr.jenkins@example.com` / `Doctor@123`
-- **Doctor (Dermatology)**: `dr.vance@example.com` / `Doctor@123`
-- **Doctor (General Medicine)**: `dr.rostova@example.com` / `Doctor@123`
-- **Patient 1**: `alex@example.com` / `Patient@123`
-- **Patient 2**: `sophia@example.com` / `Patient@123`
+    │   ├── config/
+    │   │   ├── db.js
+    │   │   └── redis.js
+    │   │
+    │   ├── models/
+    │   │   ├── User.js
+    │   │   ├── DoctorProfile.js
+    │   │   ├── Appointment.js
+    │   │   ├── Prescription.js
+    │   │   ├── Notification.js
+    │   │   ├── MedicationReminder.js
+    │   │   ├── GoogleCalendarAccount.js
+    │   │   └── AIInteraction.js
+    │   │
+    │   ├── middleware/
+    │   │   ├── auth.js
+    │   │   ├── authorize.js
+    │   │   ├── errorHandler.js
+    │   │   ├── rateLimiter.js
+    │   │   └── validate.js
+    │   │
+    │   ├── services/
+    │   │   ├── appointmentService.js
+    │   │   ├── availabilityService.js
+    │   │   ├── llmService.js
+    │   │   ├── emailService.js
+    │   │   ├── googleCalendarService.js
+    │   │   ├── notificationService.js
+    │   │   └── medicationReminderService.js
+    │   │
+    │   ├── jobs/
+    │   │   └── workers.js
+    │   │
+    │   ├── queues/
+    │   │   └── queueManager.js
+    │   │
+    │   ├── controllers/
+    │   │   ├── authController.js
+    │   │   ├── doctorController.js
+    │   │   ├── appointmentController.js
+    │   │   ├── consultationController.js
+    │   │   ├── adminController.js
+    │   │   ├── calendarController.js
+    │   │   └── notificationController.js
+    │   │
+    │   ├── routes/
+    │   │   ├── authRoutes.js
+    │   │   ├── doctorRoutes.js
+    │   │   ├── appointmentRoutes.js
+    │   │   ├── consultationRoutes.js
+    │   │   ├── adminRoutes.js
+    │   │   ├── calendarRoutes.js
+    │   │   └── notificationRoutes.js
+    │   │
+    │   ├── utils/
+    │   │   ├── logger.js
+    │   │   ├── slotGenerator.js
+    │   │   └── asyncWrapper.js
+    │   │
+    │   ├── validators/
+    │   │   └── schemas.js
+    │   │
+    │   ├── integrations/
+    │   │   ├── llmClient.js
+    │   │   ├── googleCalendarClient.js
+    │   │   └── emailTransporter.js
+    │   │
+    │   ├── app.js
+    │   └── server.js
+    │
+    ├── seed.js
+    ├── tests/
+    │   └── runTests.js
+    ├── package.json
+    └── .env.example
